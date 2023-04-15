@@ -1,14 +1,11 @@
 # This is the default target, which will be built when 
 # you invoke make
+current_dir = $(shell pwd)
+container_name = decky-stream-waker-backend
 .PHONY: all
-all: hello
-
-# This rule tells make how to build hello from hello.cpp
-hello:
-	mkdir -p ./out
-	gcc -o ./out/hello ./src/main.c 
-
-# This rule tells make to delete hello and hello.o
-.PHONY: clean 
-clean:
-	rm -f hello
+all:
+	docker build -t $(container_name) .
+	docker run --rm -i -v $(current_dir):/backend -v $(current_dir)/out:/backend/out $(container_name)
+rebuild:
+	docker rmi $(container_name)
+	docker build -t $(container_name) .

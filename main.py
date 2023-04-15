@@ -1,12 +1,36 @@
 import os
-
-# The decky plugin module is located at decky-loader/plugin
-# For easy intellisense checkout the decky-loader code one directory up
-# or add the `decky-loader/plugin` path to `python.analysis.extraPaths` in `.vscode/settings.json`
+import sys
+import logging
+from pathlib import Path
 import decky_plugin
 
+DEPSPATH = Path(decky_plugin.DECKY_PLUGIN_DIR) / "backend/out"
+
+
+std_out_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "decky-stream-waker-std-out.log", "w")
+std_err_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "decky-stream-waker-std-err.log", "w")
+
+logger = decky_plugin.logger
+
+from logging.handlers import TimedRotatingFileHandler
+log_file = Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "decky-stream-waker.log"
+log_file_handler = TimedRotatingFileHandler(log_file, when="midnight", backupCount=2)
+log_file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+logger.handlers.clear()
+logger.addHandler(log_file_handler)
+
+try:
+    sys.path.append(str(DEPSPATH / "wakeonlan"))
+    from wakeonlan import send_magic_packet
+
+    logger.info("Successfully loaded wakeonlan")
+except Exception:
+    logger.info(traceback.format_exc())
 
 class Plugin:
+    async def wake(self):
+        send_magic_packet(os.environ.get("PC_MAC"))
+
     # A normal method. It can be called from JavaScript using call_plugin_function("method_1", argument1, argument2)
     async def add(self, left, right):
         return left + right

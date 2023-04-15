@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-echo "Container's IP address: `awk 'END{print $1}' /etc/hosts`"
+OUTDIR="/backend/out"
 
 cd /backend
 
-make
+cp -r /wakeonlan /backend/out

@@ -8,16 +8,23 @@ Reference example for using [decky-frontend-lib](https://github.com/SteamDeckHom
 
 ### Dependencies
 
-This template relies on the user having `pnpm` installed on their system.  
-This can be downloaded from `npm` itself which is recommended. 
+This template relies on the user having Node.js v16.14+ and `pnpm` (v8.5.1) installed on their system.  
+Please make sure to install pnpm v8.5.1 to prevent issues with CI during plugin submission.  
+`pnpm` can be downloaded from `npm` itself which is recommended.
 
 #### Linux
 
 ```bash
-sudo npm i -g pnpm
+sudo npm i -g pnpm@8.5.1
 ```
 
+If you would like to build plugins that have their own custom backends, Docker is required as it is used by the Decky CLI tool.
+
+
+
 ### Making your own plugin
+
+If you use VSCode or it's derivatives (we suggest [VSCodium](https://vscodium.com/)!) just run the `setup` and `build` tasks. It's really that simple.
 
 1. You can fork this repo or utilize the "Use this template" button on Github.
 2. In your local fork/own plugin-repository run these commands:
@@ -27,7 +34,9 @@ sudo npm i -g pnpm
 3. Consult the [decky-frontend-lib](https://github.com/SteamDeckHomebrew/decky-frontend-lib) repository for ways to accomplish your tasks.
    - Documentation and examples are still rough, 
    - While decky-loader primarily targets Steam Deck hardware so keep this in mind when developing your plugin.
-4. If you want an all encompassing demonstration of decky-frontend-lib's capabilities check out [decky-playground](https://github.com/SteamDeckHomebrew/decky-playground). It shows off almost all of decky-frontend-lib's features.
+4. Run the `setup` and `build` and `deploy` vscode tasks, or you can derive your own makefile or just manually utilize the scripts for these commands as you see fit.
+
+If you use VSCode or it's derivatives (we suggest [VSCodium](https://vscodium.com/)!) just run the `setup` and `build` tasks. It's really that simple.
 
 #### Other important information
 
@@ -55,6 +64,8 @@ hello:
 ```
 
 The CI does create the `out` folder itself but we recommend creating it yourself if possible during your build process to ensure the build process goes smoothly.
+
+Note: When locally building your plugin it will be placed into a folder called 'out' this is different from the concept described above.
 
 The out folder is not sent to the final plugin, but is then put into a ``bin`` folder which is found at the root of the plugin's directory.  
 More information on the bin folder can be found below in the distribution section below.

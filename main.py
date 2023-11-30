@@ -1,10 +1,14 @@
 import os
 import sys
 import logging
+import traceback
 from pathlib import Path
 import decky_plugin
+import json
 
-DEPSPATH = Path(decky_plugin.DECKY_PLUGIN_DIR) / "backend/out"
+DEPSPATH = Path(decky_plugin.DECKY_PLUGIN_DIR) / "bin"
+if not DEPSPATH.exists():
+    DEPSPATH = Path(decky_plugin.DECKY_PLUGIN_DIR) / "backend/out"
 
 
 std_out_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "decky-stream-waker-std-out.log", "w")
@@ -25,15 +29,30 @@ try:
 
     logger.info("Successfully loaded wakeonlan")
 except Exception:
-    logger.info(traceback.format_exc())
+    logger.error(traceback.format_exc())
+
+try:
+    sys.path.append(str(DEPSPATH / "protobuf"))
+    from client_discovery.client_discovery import SteamClientDiscover
+
+    logger.info("Successfully loaded wakeonlan")
+except Exception:
+    logger.error(traceback.format_exc())
 
 class Plugin:
+    def __init__(self):
+        self._client_disco = SteamClientDiscover()
+
     async def wake(self):
         send_magic_packet(os.environ.get("PC_MAC"))
 
     # A normal method. It can be called from JavaScript using call_plugin_function("method_1", argument1, argument2)
     async def add(self, left, right):
         return left + right
+    
+    async def get_clients(self):
+        clients = self._client_disco.get_active_network_client_details()
+        return json.dumps(clients)
 
     # Asyncio-compatible long-running code, executed in a task when the plugin is loaded
     async def _main(self):

@@ -1,5 +1,5 @@
 {
-  "name": "Stream Waker",
+  "name": "decky-stream-waker",
   "author": "BarnDawe",
   "flags": ["debug", "_root"],
   "publish": {
